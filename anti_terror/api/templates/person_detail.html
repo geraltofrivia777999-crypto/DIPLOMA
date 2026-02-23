@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ person.person_id if person else 'Not Found' }} - AntiTerror{% endblock %}
+
+{% block content %}
+{% if person %}
+<div class="mb-6">
+    <a href="/persons" class="text-sm text-gray-400 hover:text-gray-200">&larr; Back to persons</a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Photo + info -->
+    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+        <div class="aspect-square bg-gray-700 flex items-center justify-center">
+            {% if person.has_image %}
+            <img src="/api/v1/persons/{{ person.person_id }}/image" alt="{{ person.person_id }}"
+                 class="w-full h-full object-cover">
+            {% else %}
+            <svg class="w-24 h-24 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/>
+            </svg>
+            {% endif %}
+        </div>
+        <div class="p-4">
+            <h2 class="text-xl font-bold">{{ person.person_id }}</h2>
+            <div class="mt-3 space-y-2 text-sm text-gray-400">
+                <div>Embeddings: <span class="text-gray-200">{{ person.embedding_count }}</span></div>
+                <div>First seen: <span class="timestamp text-gray-200" data-ts="{{ person.first_seen }}">{{ person.first_seen }}</span></div>
+                <div>Last seen: <span class="timestamp text-gray-200" data-ts="{{ person.last_seen }}">{{ person.last_seen }}</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bags -->
+    <div>
+        <h3 class="text-lg font-semibold mb-3">Bags ({{ bags|length }})</h3>
+        {% if bags %}
+        <div class="space-y-2">
+            {% for bag in bags %}
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-3 flex items-center justify-between">
+                <div>
+                    <span class="font-medium text-sm">{{ bag.bag_id }}</span>
+                    {% if bag.is_abandoned %}
+                    <span class="ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-red-900 text-red-200">Abandoned</span>
+                    {% endif %}
+                </div>
+                <span class="text-xs text-gray-500 timestamp" data-ts="{{ bag.last_seen }}">{{ bag.last_seen }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-sm">No bags linked</p>
+        {% endif %}
+    </div>
+
+    <!-- Events -->
+    <div>
+        <h3 class="text-lg font-semibold mb-3">Events ({{ events|length }})</h3>
+        {% if events %}
+        <div class="space-y-2 max-h-96 overflow-y-auto">
+            {% for event in events %}
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-3">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium
+                        {% if event.event_type == 'abandoned_bag' %}bg-red-900 text-red-200
+                        {% else %}bg-blue-900 text-blue-200{% endif %}">
+                        {{ event.event_type }}
+                    </span>
+                    <span class="text-xs text-gray-500 timestamp" data-ts="{{ event.timestamp }}">{{ event.timestamp }}</span>
+                </div>
+                {% if event.bag_id %}
+                <div class="text-xs text-gray-400 mt-1">Bag: {{ event.bag_id }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-sm">No events</p>
+        {% endif %}
+    </div>
+</div>
+
+{% else %}
+<div class="text-center py-12">
+    <h2 class="text-xl font-bold text-gray-400">Person not found</h2>
+    <a href="/persons" class="text-sm text-blue-400 hover:underline mt-2 inline-block">Back to list</a>
+</div>
+{% endif %}
+{% endblock %}

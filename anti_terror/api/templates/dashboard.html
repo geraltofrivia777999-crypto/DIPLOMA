@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - AntiTerror{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+
+<!-- Stats cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div class="text-sm text-gray-400 uppercase tracking-wide">Persons</div>
+        <div class="text-3xl font-bold mt-2">{{ person_count }}</div>
+    </div>
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div class="text-sm text-gray-400 uppercase tracking-wide">Bags</div>
+        <div class="text-3xl font-bold mt-2">{{ bag_count }}</div>
+    </div>
+    <div class="bg-gray-800 rounded-lg p-6 border border-red-700 {% if abandoned_count > 0 %}bg-red-900/30{% endif %}">
+        <div class="text-sm text-gray-400 uppercase tracking-wide">Abandoned</div>
+        <div class="text-3xl font-bold mt-2 {% if abandoned_count > 0 %}text-red-400{% endif %}">{{ abandoned_count }}</div>
+    </div>
+</div>
+
+<!-- Live camera feeds -->
+{% if cameras %}
+<h2 class="text-xl font-semibold mb-4">Live Cameras</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+    {% for cam_id, port in cameras.items() %}
+    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+        <div class="flex items-center justify-between px-4 py-2 border-gray-700" style="border-bottom: 1px solid var(--gray-700);">
+            <div class="flex items-center space-x-2">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" id="cam-ping-{{ cam_id }}"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500" id="cam-dot-{{ cam_id }}"></span>
+                </span>
+                <span class="text-sm font-medium">{{ cam_id }}</span>
+            </div>
+            <span class="text-xs text-gray-500">LIVE</span>
+        </div>
+        <div style="position: relative; background: #000; min-height: 240px;">
+            <img
+                id="cam-img-{{ cam_id }}"
+                alt="{{ cam_id }} stream"
+                style="width: 100%; display: block;"
+            >
+            <div id="cam-offline-{{ cam_id }}" style="display: flex; position: absolute; top: 0; left: 0; right: 0; bottom: 0; align-items: center; justify-content: center; color: #6b7280; font-size: 0.875rem;">
+                Connecting...
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="bg-gray-800 rounded-lg border border-gray-700 p-6 mb-8 text-center text-gray-500">
+    No camera streams configured. Start the pipeline with <code style="background: var(--gray-700); padding: 2px 6px; border-radius: 4px;">--preview-port 8081</code>
+</div>
+{% endif %}
+
+<!-- Recent events -->
+<h2 class="text-xl font-semibold mb-4">Recent Events</h2>
+<div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-700">
+        <thead style="background-color: var(--gray-750);">
+            <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Time</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Type</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Person</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Bag</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-700" id="events-body">
+            {% for event in recent_events %}
+            <tr class="hover:bg-gray-700/50">
+                <td class="px-4 py-3 text-sm text-gray-300 whitespace-nowrap">
+                    <span class="timestamp" data-ts="{{ event.timestamp }}">{{ event.timestamp }}</span>
+                </td>
+                <td class="px-4 py-3 text-sm">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+                        {% if event.event_type == 'abandoned_bag' %}bg-red-900 text-red-200
+                        {% else %}bg-blue-900 text-blue-200{% endif %}">
+                        {{ event.event_type }}
+                    </span>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-300">{{ event.person_id or '-' }}</td>
+                <td class="px-4 py-3 text-sm text-gray-300">{{ event.bag_id or '-' }}</td>
+            </tr>
+            {% endfor %}
+            {% if not recent_events %}
+            <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No events yet</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Live alert indicator -->
+<div id="live-alerts" class="mt-6">
+    <div class="flex items-center space-x-2 text-sm text-gray-400">
+        <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        </span>
+        <span>Live — connected to event stream</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Auto-reconnecting camera streams
+    function initCameraStream(camId) {
+        const img = document.getElementById('cam-img-' + camId);
+        const offline = document.getElementById('cam-offline-' + camId);
+        if (!img) return;
+
+        function connect() {
+            // Add timestamp to bust cache and force fresh connection
+            img.src = '/api/v1/cameras/' + camId + '/stream?t=' + Date.now();
+        }
+
+        img.onload = function() {
+            // MJPEG stream connected — hide offline overlay
+            if (offline) offline.style.display = 'none';
+            img.style.display = 'block';
+        };
+
+        img.onerror = function() {
+            // Stream broke — show offline, retry in 3s
+            img.style.display = 'none';
+            if (offline) {
+                offline.style.display = 'flex';
+                offline.textContent = 'Camera offline — reconnecting...';
+            }
+            setTimeout(connect, 3000);
+        };
+
+        connect();
+    }
+
+    // Init all camera streams
+    {% for cam_id in cameras %}
+    initCameraStream('{{ cam_id }}');
+    {% endfor %}
+
+    // SSE for live alerts on dashboard
+    const evtSource = new EventSource('/api/v1/events/stream');
+    evtSource.addEventListener('alert', function(e) {
+        const data = JSON.parse(e.data);
+        const tbody = document.getElementById('events-body');
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-700/50 bg-yellow-900/20';
+        const badgeClass = data.event_type === 'abandoned_bag'
+            ? 'bg-red-900 text-red-200'
+            : 'bg-blue-900 text-blue-200';
+        row.innerHTML = `
+            <td class="px-4 py-3 text-sm text-gray-300 whitespace-nowrap">
+                <span class="timestamp" data-ts="${data.timestamp}">${formatTs(data.timestamp)}</span>
+            </td>
+            <td class="px-4 py-3 text-sm">
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeClass}">
+                    ${data.event_type}
+                </span>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-300">${data.person_id || '-'}</td>
+            <td class="px-4 py-3 text-sm text-gray-300">${data.bag_id || '-'}</td>
+        `;
+        tbody.prepend(row);
+        setTimeout(() => row.classList.remove('bg-yellow-900/20'), 5000);
+    });
+</script>
+{% endblock %}

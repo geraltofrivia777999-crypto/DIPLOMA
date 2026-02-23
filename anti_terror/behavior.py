@@ -150,6 +150,7 @@ class BehaviorAnalyzer:
                     if (state.last_alert_time is None or
                         now - state.last_alert_time >= alert_cooldown):
 
+                        import datetime as dt
                         events.append({
                             "type": "Abandoned Bag",
                             "bag_id": state.bag_id,
@@ -157,6 +158,7 @@ class BehaviorAnalyzer:
                             "away_for_s": round(away_time, 2),
                             "static_for_s": round(static_time, 2),
                             "alert_count": state.alert_count + 1,
+                            "time": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         })
 
                         state.last_alert_time = now

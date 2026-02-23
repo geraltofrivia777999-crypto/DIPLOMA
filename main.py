@@ -1,8 +1,11 @@
 import os
 import sys
 
+# Load .env BEFORE anything else so DB_BACKEND / POSTGRES_DSN are available
+from dotenv import load_dotenv
+load_dotenv()
+
 # Fix SSL certificate verification on macOS
-# This sets the certificate bundle path for urllib/requests
 if sys.platform == "darwin":
     try:
         import certifi

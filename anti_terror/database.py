@@ -302,6 +302,28 @@ class Database:
         )
         self.conn.commit()
 
+    def save_bag_image(self, bag_id: str, jpeg_bytes: bytes):
+        """Save bag image as BLOB."""
+        cursor = self.conn.cursor()
+        # Add image column if it doesn't exist (migration)
+        try:
+            cursor.execute("ALTER TABLE bags ADD COLUMN image BLOB")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+        cursor.execute("UPDATE bags SET image = ? WHERE bag_id = ?",
+                        (jpeg_bytes, bag_id))
+        self.conn.commit()
+
+    def get_bag_image(self, bag_id: str) -> bytes | None:
+        """Get bag image by ID."""
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute("SELECT image FROM bags WHERE bag_id = ?", (bag_id,))
+            row = cursor.fetchone()
+            return bytes(row[0]) if row and row[0] else None
+        except sqlite3.OperationalError:
+            return None
+
     # === Ownership operations ===
 
     def link_bag_to_person(self, bag_id: str, person_id: str, confidence: float = 1.0):

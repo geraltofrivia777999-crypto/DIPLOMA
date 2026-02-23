@@ -1,0 +1,9 @@
+# API server dependencies (install alongside requirements.txt)
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+asyncpg>=0.29.0
+pydantic-settings>=2.1.0
+python-jose[cryptography]>=3.3.0
+python-multipart>=0.0.6
+jinja2>=3.1.3
+sse-starlette>=2.0.0

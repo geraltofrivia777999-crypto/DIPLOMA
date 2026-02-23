@@ -1,10 +1,11 @@
-"""Object detection module with optimized bag detection.
+"""Object detection module with YOLO-World open-vocabulary bag detection.
 
-Uses YOLO11x (latest, most accurate) with separate confidence thresholds
-for persons and bags to improve bag detection.
+Uses YOLO11x for person detection and YOLO-World for bag detection.
+YOLO-World can detect ANY type of bag by text prompt — backpacks, plastic bags,
+shopping bags, tote bags, etc. — without fine-tuning.
 """
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 from loguru import logger
@@ -18,84 +19,125 @@ class DetectionResult:
     boxes: np.ndarray  # (N,4) xyxy
     scores: np.ndarray  # (N,)
     classes: np.ndarray  # (N,)
+    is_bag: np.ndarray  # (N,) bool — True if bag, False if person
 
 
 class Detector:
-    """YOLO-based object detector optimized for persons and bags.
+    """Hybrid detector: YOLO11x for persons + YOLO-World for bags.
 
-    Key improvements for bag detection:
-    1. Uses YOLO11x (most accurate model)
-    2. Tuned confidence thresholds for production stability
-    3. Multi-scale detection with augmentation
-    4. Strict bag classes only (no false positives from umbrellas, etc.)
+    YOLO-World is an open-vocabulary detector that finds objects by text prompt.
+    This means it can detect plastic bags, shopping bags, tote bags, etc. —
+    not just the 3 COCO bag classes.
     """
-
-    # COCO class IDs for bags ONLY - strict filtering
-    # Removed: umbrella, tie, frisbee, skis, snowboard, sports ball, etc.
-    # These were causing too many false positives
-    BAG_CLASSES = {
-        24: "backpack",
-        26: "handbag",
-        28: "suitcase",
-    }
 
     def __init__(self, cfg: DetectionConfig):
         device = select_device(cfg.device)
-        model_path = cfg.model_path
-
-        logger.info(f"Loading YOLO model {model_path} on {device}")
-        self.model = YOLO(model_path)
-        self.model.to(device)
         self.cfg = cfg
 
-        # Separate thresholds
+        # Person detector (standard YOLO)
+        logger.info(f"Loading person detector {cfg.model_path} on {device}")
+        self.person_model = YOLO(cfg.model_path)
+        self.person_model.to(device)
+
+        # Bag detector (YOLO-World or fallback to standard YOLO)
+        self.use_yolo_world = cfg.use_yolo_world
+        if self.use_yolo_world:
+            try:
+                logger.info(f"Loading YOLO-World {cfg.yolo_world_model} for bag detection")
+                self.bag_model = YOLO(cfg.yolo_world_model)
+                self.bag_model.set_classes(list(cfg.yolo_world_prompts))
+                self.bag_model.to(device)
+                logger.info(f"YOLO-World ready with prompts: {cfg.yolo_world_prompts}")
+            except Exception as e:
+                logger.warning(f"YOLO-World failed to load: {e}. Falling back to COCO bags.")
+                self.use_yolo_world = False
+
         self.person_conf = cfg.conf_threshold
-        self.bag_conf = cfg.bag_conf_threshold  # Lower threshold for bags
+        self.bag_conf = cfg.bag_conf_threshold if not self.use_yolo_world else cfg.yolo_world_bag_conf
 
         logger.info(f"Detection thresholds - Person: {self.person_conf}, Bag: {self.bag_conf}")
 
     def __call__(self, frame: np.ndarray) -> DetectionResult:
-        """Detect objects in frame with optimized bag detection."""
+        """Detect persons and bags in frame."""
 
-        # Run detection with lower threshold to catch more bags
-        min_conf = min(self.person_conf, self.bag_conf)
+        all_boxes, all_scores, all_classes, all_is_bag = [], [], [], []
 
-        results = self.model.predict(
+        # === Person detection (standard YOLO) ===
+        person_results = self.person_model.predict(
             frame,
-            conf=min_conf,
+            conf=self.person_conf,
             iou=self.cfg.iou_threshold,
-            device=self.model.device,
+            classes=list(self.cfg.classes_person),
+            device=self.person_model.device,
             verbose=False,
-            imgsz=self.cfg.imgsz,  # Larger input = better small object detection
-            augment=self.cfg.augment,  # Test-time augmentation for better accuracy
+            imgsz=self.cfg.imgsz,
         )[0]
 
-        if len(results.boxes) == 0:
+        if len(person_results.boxes) > 0:
+            boxes = person_results.boxes.xyxy.cpu().numpy()
+            scores = person_results.boxes.conf.cpu().numpy()
+            classes = person_results.boxes.cls.cpu().numpy().astype(int)
+            all_boxes.append(boxes)
+            all_scores.append(scores)
+            all_classes.append(classes)
+            all_is_bag.append(np.zeros(len(boxes), dtype=bool))
+
+        # === Bag detection ===
+        if self.use_yolo_world:
+            # YOLO-World: open-vocabulary detection
+            bag_results = self.bag_model.predict(
+                frame,
+                conf=self.bag_conf,
+                iou=self.cfg.iou_threshold,
+                device=self.bag_model.device,
+                verbose=False,
+                imgsz=self.cfg.imgsz,
+            )[0]
+
+            if len(bag_results.boxes) > 0:
+                boxes = bag_results.boxes.xyxy.cpu().numpy()
+                scores = bag_results.boxes.conf.cpu().numpy()
+                # YOLO-World classes are 0-indexed into our prompts list
+                # Map all to a single "bag" class (24) for downstream compatibility
+                classes = np.full(len(boxes), 24, dtype=int)
+                all_boxes.append(boxes)
+                all_scores.append(scores)
+                all_classes.append(classes)
+                all_is_bag.append(np.ones(len(boxes), dtype=bool))
+        else:
+            # Fallback: standard YOLO COCO bag classes
+            bag_results = self.person_model.predict(
+                frame,
+                conf=self.bag_conf,
+                iou=self.cfg.iou_threshold,
+                classes=list(self.cfg.classes_bag),
+                device=self.person_model.device,
+                verbose=False,
+                imgsz=self.cfg.imgsz,
+                augment=self.cfg.augment,
+            )[0]
+
+            if len(bag_results.boxes) > 0:
+                boxes = bag_results.boxes.xyxy.cpu().numpy()
+                scores = bag_results.boxes.conf.cpu().numpy()
+                classes = bag_results.boxes.cls.cpu().numpy().astype(int)
+                all_boxes.append(boxes)
+                all_scores.append(scores)
+                all_classes.append(classes)
+                all_is_bag.append(np.ones(len(boxes), dtype=bool))
+
+        # Combine results
+        if not all_boxes:
             return DetectionResult(
                 boxes=np.array([]).reshape(0, 4),
                 scores=np.array([]),
-                classes=np.array([])
+                classes=np.array([]),
+                is_bag=np.array([], dtype=bool),
             )
 
-        boxes = results.boxes.xyxy.cpu().numpy()
-        scores = results.boxes.conf.cpu().numpy()
-        classes = results.boxes.cls.cpu().numpy().astype(int)
-
-        # Filter by class-specific thresholds
-        keep_mask = np.zeros(len(boxes), dtype=bool)
-
-        for i, (score, cls) in enumerate(zip(scores, classes)):
-            if cls in self.cfg.classes_person:
-                # Person class - use person threshold
-                if score >= self.person_conf:
-                    keep_mask[i] = True
-            elif cls in self.cfg.classes_bag:
-                # Bag class - use lower bag threshold
-                if score >= self.bag_conf:
-                    keep_mask[i] = True
-
         return DetectionResult(
-            boxes=boxes[keep_mask],
-            scores=scores[keep_mask],
-            classes=classes[keep_mask]
+            boxes=np.concatenate(all_boxes),
+            scores=np.concatenate(all_scores),
+            classes=np.concatenate(all_classes),
+            is_bag=np.concatenate(all_is_bag),
         )

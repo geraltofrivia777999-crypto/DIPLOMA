@@ -40,3 +40,244 @@
 2026-01-31 02:12:20.549 | WARNING  | anti_terror.behavior:update:164 - ABANDONED BAG: B_0001 (owner: P_0001, away: 10.1s, static: 11.7s)
 2026-01-31 02:12:20.550 | INFO     | anti_terror.events:emit:25 - [ALERT] 2026-01-31 02:12:20 | Abandoned Bag PersonID: P_0001 BagID: B_0001 Camera: CAM_01 details={'timestamp': '2026-01-31 02:12:20', 'camera': 'CAM_01', 'type': 'Abandoned Bag', 'bag_id': 'B_0001', 'person_id': 'P_0001', 'away_for_s': 10.05, 'static_for_s': 11.67, 'alert_count': 1}
 2026-01-31 02:12:22.527 | INFO     | anti_terror.runner:run:409 - Interrupted by user
+2026-02-15 21:28:59.651 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-15 21:28:59.652 | INFO     | anti_terror.database:load_gallery:513 - Loaded 0 identities from database
+2026-02-15 21:28:59.652 | INFO     | anti_terror.runner:_initialize_from_database:225 - Loaded 0 identities from database
+2026-02-15 21:28:59.652 | INFO     | anti_terror.database:load_bag_ownerships:662 - Loaded 0 bag ownerships from database
+2026-02-15 21:28:59.652 | INFO     | anti_terror.runner:_initialize_from_database:231 - Loaded 0 bag ownership records
+2026-02-15 21:28:59.653 | INFO     | anti_terror.runner:__init__:173 - Pipeline initialized with session 23f7af68
+2026-02-15 21:28:59.653 | INFO     | anti_terror.runner:run:601 - Starting face-centric pipeline (session 23f7af68). Press 'q' to exit.
+2026-02-15 21:29:00.657 | INFO     | anti_terror.runner:_shutdown:619 - Shutting down pipeline...
+2026-02-15 21:29:00.657 | DEBUG    | anti_terror.runner:_periodic_save:277 - Periodic save: 0 identities, 0 ownerships
+2026-02-15 21:29:00.657 | INFO     | anti_terror.runner:_shutdown:624 - Final state saved to database
+2026-02-15 21:29:00.667 | INFO     | anti_terror.runner:_shutdown:651 - Final stats: 0 faces, registry: {'active_tracks': 0, 'known_persons': 0, 'lost_tracks': 0, 'gallery_size': 0}, db: {'persons': 2, 'bags': 1, 'abandoned_bags': 0, 'ownership_links': 1}
+2026-02-15 21:39:49.748 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-15 21:39:49.749 | INFO     | anti_terror.database:load_gallery:513 - Loaded 0 identities from database
+2026-02-15 21:39:49.749 | INFO     | anti_terror.runner:_initialize_from_database:225 - Loaded 0 identities from database
+2026-02-15 21:39:49.749 | INFO     | anti_terror.database:load_bag_ownerships:662 - Loaded 0 bag ownerships from database
+2026-02-15 21:39:49.749 | INFO     | anti_terror.runner:_initialize_from_database:231 - Loaded 0 bag ownership records
+2026-02-15 21:39:49.749 | INFO     | anti_terror.runner:__init__:173 - Pipeline initialized with session 3b1d7e6f
+2026-02-15 21:39:49.749 | INFO     | anti_terror.runner:run:601 - Starting face-centric pipeline (session 3b1d7e6f). Press 'q' to exit.
+2026-02-15 21:40:06.654 | INFO     | anti_terror.face_tracker:match_or_create:157 - Created new identity P_0001 (best_match: None, score: 0.000)
+2026-02-15 21:40:14.641 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-15 21:40:22.766 | INFO     | anti_terror.runner:run:609 - Interrupted by user
+2026-02-15 21:40:22.766 | INFO     | anti_terror.runner:_shutdown:619 - Shutting down pipeline...
+2026-02-15 21:40:22.767 | DEBUG    | anti_terror.runner:_periodic_save:277 - Periodic save: 1 identities, 0 ownerships
+2026-02-15 21:40:22.767 | INFO     | anti_terror.runner:_shutdown:624 - Final state saved to database
+2026-02-15 21:40:22.774 | INFO     | anti_terror.runner:_shutdown:651 - Final stats: 1 faces, registry: {'active_tracks': 1, 'known_persons': 1, 'lost_tracks': 1, 'gallery_size': 1}, db: {'persons': 2, 'bags': 1, 'abandoned_bags': 0, 'ownership_links': 1}
+2026-02-16 02:28:15.580 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 1
+2026-02-16 02:28:15.586 | INFO     | anti_terror.db.postgres_database:load_gallery:281 - Loaded 0 identities from database
+2026-02-16 02:28:15.586 | INFO     | anti_terror.runner:_initialize_from_database:225 - Loaded 0 identities from database
+2026-02-16 02:28:15.588 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:379 - Loaded 0 bag ownerships from database
+2026-02-16 02:28:15.588 | INFO     | anti_terror.runner:_initialize_from_database:231 - Loaded 0 bag ownership records
+2026-02-16 02:28:15.590 | INFO     | anti_terror.runner:_initialize_from_database:256 - Restored 0 bag centroids from database
+2026-02-16 02:28:15.590 | INFO     | anti_terror.runner:__init__:173 - Pipeline initialized with session 6bd7a2d4
+2026-02-16 02:28:15.590 | INFO     | anti_terror.runner:run:601 - Starting face-centric pipeline (session 6bd7a2d4). Press 'q' to exit.
+2026-02-16 02:28:20.684 | INFO     | anti_terror.face_tracker:match_or_create:157 - Created new identity P_0001 (best_match: None, score: 0.000)
+2026-02-16 02:28:26.356 | INFO     | anti_terror.face_tracker:match_or_create:157 - Created new identity P_0002 (best_match: P_0001, score: 0.065)
+2026-02-16 02:28:26.865 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 4 (P_0002) marked as lost
+2026-02-16 02:28:31.244 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 4 (P_0002) marked as lost
+2026-02-16 02:28:52.738 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 02:28:54.757 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 02:28:56.034 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 8 to P_0001 (score: 0.746)
+2026-02-16 02:28:59.172 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 1 to P_0001 (score: 0.867)
+2026-02-16 02:28:59.172 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 8 (P_0001) marked as lost
+2026-02-16 02:30:30.431 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 02:30:31.433 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 14 to P_0001 (score: 0.904)
+2026-02-16 02:30:58.555 | INFO     | anti_terror.runner:_shutdown:619 - Shutting down pipeline...
+2026-02-16 02:30:58.558 | ERROR    | anti_terror.runner:_shutdown:626 - Failed to save final state: duplicate key value violates unique constraint "identity_embeddings_person_id_is_centroid_timestamp_key"
+DETAIL:  Key (person_id, is_centroid, "timestamp")=(P_0001, f, 1771198258.555391) already exists.
+2026-02-16 02:30:58.610 | INFO     | anti_terror.runner:_shutdown:651 - Final stats: 2 faces, registry: {'active_tracks': 4, 'known_persons': 2, 'lost_tracks': 1, 'gallery_size': 2}, db: {'persons': 1, 'bags': 0, 'abandoned_bags': 0, 'ownership_links': 0}
+2026-02-16 02:36:09.032 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 1
+2026-02-16 02:36:09.039 | INFO     | anti_terror.db.postgres_database:load_gallery:284 - Loaded 0 identities from database
+2026-02-16 02:36:09.039 | INFO     | anti_terror.runner:_initialize_from_database:225 - Loaded 0 identities from database
+2026-02-16 02:36:09.041 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:382 - Loaded 0 bag ownerships from database
+2026-02-16 02:36:09.041 | INFO     | anti_terror.runner:_initialize_from_database:231 - Loaded 0 bag ownership records
+2026-02-16 02:36:09.042 | INFO     | anti_terror.runner:_initialize_from_database:256 - Restored 0 bag centroids from database
+2026-02-16 02:36:09.042 | INFO     | anti_terror.runner:__init__:173 - Pipeline initialized with session fe594ba3
+2026-02-16 02:36:09.042 | INFO     | anti_terror.runner:__init__:84 - Preview server started at http://localhost:8081
+2026-02-16 02:36:09.043 | INFO     | anti_terror.runner:run:601 - Starting face-centric pipeline (session fe594ba3). Press 'q' to exit.
+2026-02-16 02:36:13.740 | INFO     | anti_terror.face_tracker:match_or_create:157 - Created new identity P_0001 (best_match: None, score: 0.000)
+2026-02-16 02:36:56.347 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 02:38:21.050 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 02:38:32.351 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 02:38:57.925 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 02:38:59.616 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 6 to P_0001 (score: 0.804)
+2026-02-16 02:39:32.476 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 6 (P_0001) marked as lost
+2026-02-16 02:39:34.925 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 7 to P_0001 (score: 0.918)
+2026-02-16 02:39:48.006 | DEBUG    | anti_terror.runner:_periodic_save:277 - Periodic save: 1 identities, 0 ownerships
+2026-02-16 02:40:03.276 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 7 (P_0001) marked as lost
+2026-02-16 02:40:16.121 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 7 to P_0001 (score: 0.859)
+2026-02-16 02:40:16.123 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 6 (P_0001) marked as lost
+2026-02-16 02:40:30.859 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 6 to P_0001 (score: 0.618)
+2026-02-16 02:40:30.862 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 7 (P_0001) marked as lost
+2026-02-16 02:40:41.910 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 7 to P_0001 (score: 0.817)
+2026-02-16 02:40:41.911 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 6 (P_0001) marked as lost
+2026-02-16 02:40:43.359 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 7 (P_0001) marked as lost
+2026-02-16 02:40:55.873 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 7 to P_0001 (score: 0.773)
+2026-02-16 02:40:55.874 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 6 (P_0001) marked as lost
+2026-02-16 02:41:29.517 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 7 (P_0001) marked as lost
+2026-02-16 02:41:34.496 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 6 to P_0001 (score: 0.789)
+2026-02-16 02:41:34.496 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 7 (P_0001) marked as lost
+2026-02-16 02:41:45.166 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 6 (P_0001) marked as lost
+2026-02-16 02:41:47.990 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 9 to P_0001 (score: 0.879)
+2026-02-16 02:41:52.644 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 9 (P_0001) marked as lost
+2026-02-16 02:42:04.372 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 9 (P_0001) marked as lost
+2026-02-16 02:42:06.454 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 10 to P_0001 (score: 0.700)
+2026-02-16 02:42:26.975 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 10 (P_0001) marked as lost
+2026-02-16 02:42:37.236 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 10 (P_0001) marked as lost
+2026-02-16 02:42:38.932 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 11 to P_0001 (score: 0.859)
+2026-02-16 02:42:46.425 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 10 to P_0001 (score: 0.838)
+2026-02-16 02:42:46.426 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 11 (P_0001) marked as lost
+2026-02-16 02:42:47.336 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 9 to P_0001 (score: 0.834)
+2026-02-16 02:42:47.338 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 10 (P_0001) marked as lost
+2026-02-16 02:42:48.864 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 9 (P_0001) marked as lost
+2026-02-16 02:42:49.672 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 11 to P_0001 (score: 0.799)
+2026-02-16 02:43:09.316 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 11 (P_0001) marked as lost
+2026-02-16 02:43:11.887 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 11 (P_0001) marked as lost
+2026-02-16 02:43:13.547 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 12 to P_0001 (score: 0.768)
+2026-02-16 02:43:32.003 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 12 (P_0001) marked as lost
+2026-02-16 02:43:33.401 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 11 to P_0001 (score: 0.662)
+2026-02-16 02:43:41.738 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 11 (P_0001) marked as lost
+2026-02-16 02:43:43.220 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 14 to P_0001 (score: 0.749)
+2026-02-16 02:43:59.247 | DEBUG    | anti_terror.runner:_periodic_save:277 - Periodic save: 1 identities, 0 ownerships
+2026-02-16 02:44:01.178 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 12 to P_0001 (score: 0.781)
+2026-02-16 02:44:01.180 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 14 (P_0001) marked as lost
+2026-02-16 02:44:01.918 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 12 (P_0001) marked as lost
+2026-02-16 02:44:03.542 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 15 to P_0001 (score: 0.747)
+2026-02-16 02:44:04.338 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:44:07.101 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 12 (P_0001) marked as lost
+2026-02-16 02:44:08.066 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:44:12.249 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 15 to P_0001 (score: 0.833)
+2026-02-16 02:44:12.251 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 12 (P_0001) marked as lost
+2026-02-16 02:44:16.413 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 12 to P_0001 (score: 0.843)
+2026-02-16 02:44:16.417 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:44:17.448 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 12 (P_0001) marked as lost
+2026-02-16 02:44:18.367 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 14 to P_0001 (score: 0.790)
+2026-02-16 02:44:18.368 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:44:19.103 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 14 (P_0001) marked as lost
+2026-02-16 02:44:38.918 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 12 (P_0001) marked as lost
+2026-02-16 02:44:40.674 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 15 to P_0001 (score: 0.771)
+2026-02-16 02:44:57.098 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:44:58.951 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 12 to P_0001 (score: 0.655)
+2026-02-16 02:44:58.953 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:44:59.805 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 12 (P_0001) marked as lost
+2026-02-16 02:45:10.897 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:45:23.517 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:45:25.317 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 18 to P_0001 (score: 0.779)
+2026-02-16 02:45:41.054 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 15 to P_0001 (score: 0.575)
+2026-02-16 02:45:41.055 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 18 (P_0001) marked as lost
+2026-02-16 02:45:42.749 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 15 (P_0001) marked as lost
+2026-02-16 02:46:09.835 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 18 (P_0001) marked as lost
+2026-02-16 02:46:15.941 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 22 to P_0001 (score: 0.866)
+2026-02-16 02:46:31.451 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 22 (P_0001) marked as lost
+2026-02-16 02:46:36.611 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 18 to P_0001 (score: 0.774)
+2026-02-16 02:46:38.869 | INFO     | anti_terror.runner:run:609 - Interrupted by user
+2026-02-16 02:46:38.870 | INFO     | anti_terror.runner:_shutdown:619 - Shutting down pipeline...
+2026-02-16 02:46:38.908 | DEBUG    | anti_terror.runner:_periodic_save:277 - Periodic save: 1 identities, 2 ownerships
+2026-02-16 02:46:38.909 | INFO     | anti_terror.runner:_shutdown:624 - Final state saved to database
+2026-02-16 02:49:49.381 | INFO     | anti_terror.runner:_shutdown:651 - Final stats: 1 faces, registry: {'active_tracks': 11, 'known_persons': 1, 'lost_tracks': 2, 'gallery_size': 1}, db: {'persons': 1, 'bags': 0, 'abandoned_bags': 0, 'ownership_links': 0}
+2026-02-16 02:51:07.207 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-16 02:51:07.220 | INFO     | anti_terror.db.postgres_database:load_gallery:284 - Loaded 1 identities from database
+2026-02-16 02:51:07.222 | INFO     | anti_terror.runner:_initialize_from_database:225 - Loaded 1 identities from database
+2026-02-16 02:51:07.224 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:382 - Loaded 0 bag ownerships from database
+2026-02-16 02:51:07.225 | INFO     | anti_terror.runner:_initialize_from_database:231 - Loaded 0 bag ownership records
+2026-02-16 02:51:07.228 | INFO     | anti_terror.runner:_initialize_from_database:256 - Restored 1 bag centroids from database
+2026-02-16 02:51:07.229 | INFO     | anti_terror.runner:__init__:173 - Pipeline initialized with session 61b59fe0
+2026-02-16 02:51:07.229 | INFO     | anti_terror.runner:__init__:84 - Preview server started at http://localhost:8081
+2026-02-16 02:51:07.230 | INFO     | anti_terror.runner:run:611 - Starting face-centric pipeline (session 61b59fe0). Press 'q' to exit.
+2026-02-16 02:51:56.623 | INFO     | anti_terror.face_tracker:match_or_create:157 - Created new identity P_0002 (best_match: P_0001, score: 0.214)
+2026-02-16 02:51:58.461 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 7 (P_0002) marked as lost
+2026-02-16 02:52:08.679 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 8 to P_0002 (score: 0.939)
+2026-02-16 02:52:14.614 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 7 to P_0002 (score: 0.872)
+2026-02-16 02:52:14.614 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 8 (P_0002) marked as lost
+2026-02-16 02:52:27.488 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 7 (P_0002) marked as lost
+2026-02-16 02:53:21.275 | INFO     | anti_terror.runner:run:619 - Interrupted by user
+2026-02-16 02:53:21.277 | INFO     | anti_terror.runner:_shutdown:629 - Shutting down pipeline...
+2026-02-16 02:53:21.352 | DEBUG    | anti_terror.runner:_periodic_save:277 - Periodic save: 2 identities, 11 ownerships
+2026-02-16 02:53:21.352 | INFO     | anti_terror.runner:_shutdown:634 - Final state saved to database
+2026-02-16 03:01:59.320 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-16 03:01:59.339 | INFO     | anti_terror.db.postgres_database:load_gallery:284 - Loaded 2 identities from database
+2026-02-16 03:01:59.340 | INFO     | anti_terror.runner:_initialize_from_database:225 - Loaded 2 identities from database
+2026-02-16 03:01:59.342 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:382 - Loaded 0 bag ownerships from database
+2026-02-16 03:01:59.342 | INFO     | anti_terror.runner:_initialize_from_database:231 - Loaded 0 bag ownership records
+2026-02-16 03:01:59.345 | INFO     | anti_terror.runner:_initialize_from_database:256 - Restored 1 bag centroids from database
+2026-02-16 03:01:59.346 | INFO     | anti_terror.runner:__init__:173 - Pipeline initialized with session 8bb8e7f7
+2026-02-16 03:01:59.346 | INFO     | anti_terror.runner:__init__:84 - Preview server started at http://localhost:8081
+2026-02-16 03:01:59.347 | INFO     | anti_terror.runner:run:626 - Starting face-centric pipeline (session 8bb8e7f7). Press 'q' to exit.
+2026-02-16 03:02:41.883 | INFO     | anti_terror.runner:run:634 - Interrupted by user
+2026-02-16 03:02:41.883 | INFO     | anti_terror.runner:_shutdown:644 - Shutting down pipeline...
+2026-02-16 03:02:41.910 | DEBUG    | anti_terror.runner:_periodic_save:277 - Periodic save: 2 identities, 4 ownerships
+2026-02-16 03:02:41.910 | INFO     | anti_terror.runner:_shutdown:649 - Final state saved to database
+2026-02-16 03:11:12.475 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-16 03:11:12.488 | INFO     | anti_terror.db.postgres_database:load_gallery:284 - Loaded 2 identities from database
+2026-02-16 03:11:12.490 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 2 identities from database
+2026-02-16 03:11:12.493 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:382 - Loaded 0 bag ownerships from database
+2026-02-16 03:11:12.493 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-02-16 03:11:12.495 | INFO     | anti_terror.runner:_initialize_from_database:317 - Restored 1 bag centroids from database
+2026-02-16 03:11:12.495 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session b9bf93dc
+2026-02-16 03:11:37.960 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-16 03:11:37.976 | INFO     | anti_terror.db.postgres_database:load_gallery:284 - Loaded 2 identities from database
+2026-02-16 03:11:37.977 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 2 identities from database
+2026-02-16 03:11:37.979 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:382 - Loaded 0 bag ownerships from database
+2026-02-16 03:11:37.980 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-02-16 03:11:37.982 | INFO     | anti_terror.runner:_initialize_from_database:317 - Restored 1 bag centroids from database
+2026-02-16 03:11:37.982 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session 64dbedce
+2026-02-16 03:11:37.983 | INFO     | anti_terror.runner:__init__:85 - Preview server started at http://localhost:8081
+2026-02-16 03:11:37.983 | INFO     | anti_terror.runner:run:729 - Starting face-centric pipeline (session 64dbedce). Press 'q' to exit.
+2026-02-16 03:11:52.199 | INFO     | anti_terror.runner:process_frame:455 - New bag B_0002 (track=2, score=-1.000, frames=3)
+2026-02-16 03:12:11.346 | INFO     | anti_terror.runner:process_frame:455 - New bag B_0003 (track=8, score=-1.000, frames=3)
+2026-02-16 03:12:13.460 | INFO     | anti_terror.runner:process_frame:455 - New bag B_0004 (track=11, score=-1.000, frames=3)
+2026-02-16 03:12:14.161 | INFO     | anti_terror.runner:process_frame:455 - New bag B_0005 (track=5, score=-1.000, frames=4)
+2026-02-16 03:13:31.706 | INFO     | anti_terror.runner:run:737 - Interrupted by user
+2026-02-16 03:13:31.708 | INFO     | anti_terror.runner:_shutdown:747 - Shutting down pipeline...
+2026-02-16 03:13:31.779 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 2 identities, 11 ownerships
+2026-02-16 03:13:31.779 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
+2026-02-16 03:13:38.205 | INFO     | anti_terror.runner:_shutdown:779 - Final stats: 2 faces, registry: {'active_tracks': 0, 'known_persons': 0, 'lost_tracks': 0, 'gallery_size': 2}, db: {'persons': 2, 'bags': 1, 'abandoned_bags': 0, 'ownership_links': 0}
+2026-02-16 03:14:04.609 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-16 03:14:04.622 | INFO     | anti_terror.db.postgres_database:load_gallery:284 - Loaded 2 identities from database
+2026-02-16 03:14:04.623 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 2 identities from database
+2026-02-16 03:14:04.624 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:382 - Loaded 0 bag ownerships from database
+2026-02-16 03:14:04.624 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-02-16 03:14:04.627 | INFO     | anti_terror.runner:_initialize_from_database:317 - Restored 5 bag centroids from database
+2026-02-16 03:14:04.628 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session aaeeb294
+2026-02-16 03:14:04.628 | INFO     | anti_terror.runner:__init__:85 - Preview server started at http://localhost:8081
+2026-02-16 03:14:04.628 | INFO     | anti_terror.runner:run:729 - Starting face-centric pipeline (session aaeeb294). Press 'q' to exit.
+2026-02-16 03:14:22.953 | INFO     | anti_terror.runner:_update_database:571 - Saved bag image for B_0002
+2026-02-16 03:14:22.967 | INFO     | anti_terror.runner:_update_database:571 - Saved bag image for B_0001
+2026-02-16 03:15:07.141 | INFO     | anti_terror.runner:_shutdown:747 - Shutting down pipeline...
+2026-02-16 03:15:07.178 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 2 identities, 9 ownerships
+2026-02-16 03:15:07.178 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
+2026-02-16 03:24:17.477 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-16 03:24:17.488 | INFO     | anti_terror.db.postgres_database:load_gallery:307 - Loaded 2 identities from database
+2026-02-16 03:24:17.489 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 2 identities from database
+2026-02-16 03:24:17.490 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:405 - Loaded 0 bag ownerships from database
+2026-02-16 03:24:17.490 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-02-16 03:24:17.492 | INFO     | anti_terror.runner:_initialize_from_database:317 - Restored 0 bag centroids from database
+2026-02-16 03:24:17.492 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session b9358996
+2026-02-16 03:24:17.492 | INFO     | anti_terror.runner:run:729 - Starting face-centric pipeline (session b9358996). Press 'q' to exit.
+2026-02-16 03:24:41.587 | INFO     | anti_terror.runner:run:737 - Interrupted by user
+2026-02-16 03:24:41.587 | INFO     | anti_terror.runner:_shutdown:747 - Shutting down pipeline...
+2026-02-16 03:24:41.609 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 2 identities, 0 ownerships
+2026-02-16 03:24:41.609 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
+2026-02-16 03:24:41.652 | INFO     | anti_terror.runner:_shutdown:779 - Final stats: 2 faces, registry: {'active_tracks': 1, 'known_persons': 1, 'lost_tracks': 0, 'gallery_size': 2}, db: {'persons': 2, 'bags': 2, 'abandoned_bags': 0, 'ownership_links': 0}
+2026-02-16 03:25:00.868 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-02-16 03:25:00.876 | INFO     | anti_terror.db.postgres_database:load_gallery:307 - Loaded 2 identities from database
+2026-02-16 03:25:00.877 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 2 identities from database
+2026-02-16 03:25:00.878 | INFO     | anti_terror.db.postgres_database:load_bag_ownerships:405 - Loaded 0 bag ownerships from database
+2026-02-16 03:25:00.878 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-02-16 03:25:00.879 | INFO     | anti_terror.runner:_initialize_from_database:317 - Restored 0 bag centroids from database
+2026-02-16 03:25:00.879 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session e87240d3
+2026-02-16 03:25:00.880 | INFO     | anti_terror.runner:__init__:85 - Preview server started at http://localhost:8081
+2026-02-16 03:25:00.880 | INFO     | anti_terror.runner:run:729 - Starting face-centric pipeline (session e87240d3). Press 'q' to exit.
+2026-02-16 03:25:09.362 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 03:25:10.428 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 2 to P_0001 (score: 0.723)
+2026-02-16 03:25:16.863 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 1 to P_0001 (score: 0.824)
+2026-02-16 03:25:16.863 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 2 (P_0001) marked as lost
+2026-02-16 03:25:32.057 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 03:25:34.177 | DEBUG    | anti_terror.face_tracker:mark_track_lost:306 - Track 1 (P_0001) marked as lost
+2026-02-16 03:25:35.639 | INFO     | anti_terror.face_tracker:try_relink:336 - Relinked track 3 to P_0001 (score: 0.807)
+2026-02-16 03:25:39.782 | INFO     | anti_terror.runner:_shutdown:747 - Shutting down pipeline...
+2026-02-16 03:25:39.815 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 2 identities, 2 ownerships
+2026-02-16 03:25:39.815 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
+2026-02-16 03:26:18.974 | INFO     | anti_terror.runner:_shutdown:779 - Final stats: 2 faces, registry: {'active_tracks': 3, 'known_persons': 1, 'lost_tracks': 2, 'gallery_size': 2}, db: {'persons': 2, 'bags': 2, 'abandoned_bags': 0, 'ownership_links': 0}

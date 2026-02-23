@@ -1,0 +1,32 @@
+/* AntiTerror Dashboard custom styles */
+
+/* Fade-in animation for new alerts */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Active nav link highlight */
+.nav-link.active {
+    background-color: rgb(55, 65, 81);
+    color: white;
+}
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgb(31, 41, 55);
+}
+::-webkit-scrollbar-thumb {
+    background: rgb(75, 85, 99);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(107, 114, 128);
+}

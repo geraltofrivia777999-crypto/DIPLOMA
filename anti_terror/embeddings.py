@@ -66,114 +66,69 @@ class EmbeddingSample:
 
 
 class BagEmbedder:
-    """Enhanced bag embedding with multiple feature types.
+    """Bag embedding using DINOv2 for instance-level discrimination.
 
-    Combines CNN features + color histogram + shape features for more robust
-    bag re-identification. This compensates for ResNet's generic training.
+    DINOv2 is a self-supervised Vision Transformer trained for instance
+    discrimination — it naturally separates individual objects, unlike
+    ResNet50 which groups objects by category.
+
+    DINOv2-small: 384-dim, fast, excellent discrimination.
     """
 
     def __init__(self, cfg: EmbeddingConfig):
         device = select_device(cfg.device)
-        if cfg.bag_model_name.lower() == "resnet50":
-            backbone = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
+        model_name = getattr(cfg, 'bag_model_name', 'dinov2_vits14')
+
+        if model_name.startswith("dinov2"):
+            # DINOv2 via torch.hub
+            logger.info(f"Loading DINOv2 ({model_name}) for bag embeddings...")
+            self.model = torch.hub.load(
+                "facebookresearch/dinov2", model_name, verbose=False
+            )
+            self.model.eval().to(device)
+            self.embed_dim = self.model.embed_dim  # 384 for vits14
+            self._is_dino = True
         else:
-            backbone = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
-        backbone = torch.nn.Sequential(*(list(backbone.children())[:-1]))  # remove classifier
-        backbone.eval().to(device)
-        self.model = backbone
+            # Fallback to ResNet50
+            if model_name.lower() == "resnet50":
+                backbone = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
+            else:
+                backbone = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+            backbone = torch.nn.Sequential(*(list(backbone.children())[:-1]))
+            backbone.eval().to(device)
+            self.model = backbone
+            self.embed_dim = 2048 if "50" in model_name else 512
+            self._is_dino = False
+
         self.device = device
         self.cfg = cfg
-        self.use_color = getattr(cfg, 'bag_use_color_histogram', True)
-        self.use_shape = getattr(cfg, 'bag_use_shape_features', True)
-        self.transform = transforms.Compose(
-            [
-                transforms.ToPILImage(),
-                transforms.Resize((224, 224)),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            ]
-        )
-        feature_desc = "CNN"
-        if self.use_color:
-            feature_desc += "+Color"
-        if self.use_shape:
-            feature_desc += "+Shape"
-        logger.info(f"Bag embedder ready on {device} ({feature_desc})")
-
-    def _compute_color_histogram(self, crop: np.ndarray) -> np.ndarray:
-        """Compute normalized color histogram in HSV space.
-
-        HSV is more robust to lighting changes than RGB.
-        Returns 96-dim vector (32 bins x 3 channels).
-        """
-        try:
-            hsv = cv2.cvtColor(crop, cv2.COLOR_RGB2HSV)
-            hist = []
-            for channel in range(3):
-                h, _ = np.histogram(hsv[:, :, channel], bins=32, range=(0, 256))
-                h = h.astype(np.float32)
-                h = h / (h.sum() + 1e-6)  # Normalize
-                hist.extend(h)
-            return np.array(hist, dtype=np.float32)
-        except Exception:
-            return np.zeros(96, dtype=np.float32)
-
-    def _compute_shape_features(self, crop: np.ndarray) -> np.ndarray:
-        """Compute shape descriptors.
-
-        Returns 4-dim vector: aspect ratio, log area, compactness, inverse aspect.
-        """
-        try:
-            h, w = crop.shape[:2]
-            aspect_ratio = w / (h + 1e-6)
-            area = h * w
-            perimeter = 2 * (h + w)
-            compactness = (4 * np.pi * area) / (perimeter ** 2 + 1e-6)
-            return np.array([
-                aspect_ratio,
-                np.log(area + 1),
-                compactness,
-                h / (w + 1e-6)
-            ], dtype=np.float32)
-        except Exception:
-            return np.zeros(4, dtype=np.float32)
+        self.transform = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225]),
+        ])
+        logger.info(f"Bag embedder ready on {device} "
+                     f"({model_name}, {self.embed_dim}-dim)")
 
     @torch.inference_mode()
     def __call__(self, crop: np.ndarray) -> torch.Tensor:
-        """Extract multi-feature embedding from bag crop.
+        """Extract embedding from bag crop.
 
-        Returns normalized embedding combining:
-        - CNN features (2048-dim from ResNet50)
-        - Color histogram (96-dim, optional)
-        - Shape features (4-dim, optional)
+        Returns normalized embedding (384-dim for DINOv2-small).
         """
-        # 1. CNN features
         tensor = self.transform(crop).unsqueeze(0).to(self.device)
-        cnn_emb = self.model(tensor).flatten(1)
-        cnn_emb = F.normalize(cnn_emb, dim=1).cpu().squeeze(0)
 
-        if not self.use_color and not self.use_shape:
-            return cnn_emb
+        if self._is_dino:
+            # DINOv2 cls_token output
+            emb = self.model(tensor)  # (1, embed_dim)
+        else:
+            # ResNet: global average pool
+            emb = self.model(tensor).flatten(1)  # (1, 2048)
 
-        features = [cnn_emb]
-
-        # 2. Color histogram (robust to viewpoint changes)
-        if self.use_color:
-            color_hist = self._compute_color_histogram(crop)
-            # Scale color features to similar magnitude as CNN
-            color_tensor = torch.tensor(color_hist, dtype=torch.float32) * 0.5
-            features.append(color_tensor)
-
-        # 3. Shape features (aspect ratio, compactness)
-        if self.use_shape:
-            shape_feat = self._compute_shape_features(crop)
-            # Scale shape features
-            shape_tensor = torch.tensor(shape_feat, dtype=torch.float32) * 0.3
-            features.append(shape_tensor)
-
-        # Concatenate and normalize
-        combined = torch.cat(features)
-        return F.normalize(combined, dim=0)
+        emb = F.normalize(emb, dim=1).cpu().squeeze(0)
+        return emb
 
 
 class FaceEmbedder:

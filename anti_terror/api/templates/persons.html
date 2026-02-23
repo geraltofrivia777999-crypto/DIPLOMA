@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Persons - AntiTerror{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Persons</h1>
+    <span class="text-sm text-gray-400">{{ persons|length }} total</span>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    {% for p in persons %}
+    <a href="/persons/{{ p.person_id }}" class="bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-500 transition-colors overflow-hidden">
+        <div class="aspect-square bg-gray-700 flex items-center justify-center">
+            {% if p.has_image %}
+            <img src="/api/v1/persons/{{ p.person_id }}/image" alt="{{ p.person_id }}"
+                 class="w-full h-full object-cover">
+            {% else %}
+            <svg class="w-16 h-16 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/>
+            </svg>
+            {% endif %}
+        </div>
+        <div class="p-3">
+            <div class="font-medium text-sm">{{ p.person_id }}</div>
+            <div class="text-xs text-gray-400 mt-1">
+                Embeddings: {{ p.embedding_count }}
+            </div>
+            <div class="text-xs text-gray-500 mt-1">
+                Last seen: <span class="timestamp" data-ts="{{ p.last_seen }}">{{ p.last_seen }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+    {% if not persons %}
+    <div class="col-span-full text-center py-12 text-gray-500">No persons detected yet</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full bg-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AntiTerror{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="h-full text-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 border-b border-gray-700">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-xl font-bold text-red-500">AntiTerror</a>
+                    <div class="hidden md:flex space-x-2">
+                        <a href="/" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Dashboard</a>
+                        <a href="/persons" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Persons</a>
+                        <a href="/bags" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Bags</a>
+                        <a href="/alerts" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Alerts</a>
+                        <a href="/search" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Search</a>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-400">
+                    <span id="clock"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/js/dashboard.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

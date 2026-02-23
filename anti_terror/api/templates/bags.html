@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Bags - AntiTerror{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Bags</h1>
+    <div class="flex space-x-2">
+        <a href="/bags" class="px-3 py-1.5 rounded text-sm {% if not filter_abandoned %}bg-blue-600{% else %}bg-gray-700{% endif %} hover:bg-blue-700">All</a>
+        <a href="/bags?abandoned=true" class="px-3 py-1.5 rounded text-sm {% if filter_abandoned %}bg-red-600{% else %}bg-gray-700{% endif %} hover:bg-red-700">Abandoned</a>
+    </div>
+</div>
+
+<div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-700">
+        <thead>
+            <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Image</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Bag ID</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Owner</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Last Seen</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-700">
+            {% for bag in bags %}
+            <tr class="hover:bg-gray-700/50 {% if bag.is_abandoned %}bg-red-900/10{% endif %}">
+                <td class="px-4 py-3">
+                    {% if bag.has_image %}
+                    <img src="/api/v1/bags/{{ bag.bag_id }}/image" alt="{{ bag.bag_id }}" class="w-12 h-12 rounded object-cover">
+                    {% else %}
+                    <div class="w-12 h-12 rounded bg-gray-700 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3 text-sm font-medium">{{ bag.bag_id }}</td>
+                <td class="px-4 py-3 text-sm">
+                    {% if bag.owner_person_id %}
+                    <a href="/persons/{{ bag.owner_person_id }}" class="text-blue-400 hover:underline">{{ bag.owner_person_id }}</a>
+                    {% else %}
+                    <span class="text-gray-500">Unknown</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3 text-sm">
+                    {% if bag.is_abandoned %}
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-red-900 text-red-200">Abandoned</span>
+                    {% else %}
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-900 text-green-200">Active</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-400">
+                    <span class="timestamp" data-ts="{{ bag.last_seen }}">{{ bag.last_seen }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not bags %}
+            <tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No bags detected yet</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

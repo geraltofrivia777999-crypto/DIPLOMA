@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Live Alerts - AntiTerror{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Live Alerts</h1>
+    <div class="flex items-center space-x-2 text-sm">
+        <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" id="ping"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500" id="dot"></span>
+        </span>
+        <span id="status-text" class="text-gray-400">Connecting...</span>
+    </div>
+</div>
+
+<div id="alerts-feed" class="space-y-3">
+    <p class="text-gray-500 text-sm text-center py-8">Waiting for alerts...</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const feed = document.getElementById('alerts-feed');
+    const statusText = document.getElementById('status-text');
+    const ping = document.getElementById('ping');
+    const dot = document.getElementById('dot');
+    let firstEvent = true;
+
+    const evtSource = new EventSource('/api/v1/events/stream');
+
+    evtSource.onopen = () => {
+        statusText.textContent = 'Connected';
+        dot.className = 'relative inline-flex rounded-full h-3 w-3 bg-green-500';
+    };
+
+    evtSource.onerror = () => {
+        statusText.textContent = 'Disconnected — retrying...';
+        dot.className = 'relative inline-flex rounded-full h-3 w-3 bg-red-500';
+    };
+
+    evtSource.addEventListener('alert', function(e) {
+        if (firstEvent) {
+            feed.innerHTML = '';
+            firstEvent = false;
+        }
+        const data = JSON.parse(e.data);
+        const isAbandoned = data.event_type === 'abandoned_bag';
+        const borderColor = isAbandoned ? 'border-red-600' : 'border-blue-700';
+        const bgColor = isAbandoned ? 'bg-red-900/20' : 'bg-gray-800';
+        const badgeClass = isAbandoned ? 'bg-red-900 text-red-200' : 'bg-blue-900 text-blue-200';
+
+        const card = document.createElement('div');
+        card.className = `rounded-lg border ${borderColor} ${bgColor} p-4 animate-fade-in`;
+        card.innerHTML = `
+            <div class="flex items-center justify-between mb-2">
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeClass}">
+                    ${data.event_type}
+                </span>
+                <span class="text-xs text-gray-400">${formatTs(data.timestamp)}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                    <span class="text-gray-400">Person:</span>
+                    ${data.person_id
+                        ? `<a href="/persons/${data.person_id}" class="text-blue-400 hover:underline ml-1">${data.person_id}</a>`
+                        : '<span class="text-gray-500 ml-1">-</span>'}
+                </div>
+                <div>
+                    <span class="text-gray-400">Bag:</span>
+                    <span class="ml-1">${data.bag_id || '-'}</span>
+                </div>
+            </div>
+        `;
+        feed.prepend(card);
+
+        // Keep max 100 alerts
+        while (feed.children.length > 100) {
+            feed.removeChild(feed.lastChild);
+        }
+    });
+</script>
+{% endblock %}

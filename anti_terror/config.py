@@ -29,6 +29,16 @@ class DetectionConfig:
     # 24=backpack, 26=handbag, 28=suitcase
     classes_bag: tuple[int, ...] = (24, 26, 28)
 
+    # YOLO-World open-vocabulary bag detection
+    use_yolo_world: bool = True  # Use YOLO-World for bag detection
+    yolo_world_model: str = "yolov8x-worldv2.pt"  # Best accuracy
+    yolo_world_bag_conf: float = 0.15  # Lower threshold — catch more bags
+    yolo_world_prompts: tuple[str, ...] = (
+        "backpack", "handbag", "suitcase", "bag", "shopping bag",
+        "plastic bag", "duffel bag", "tote bag", "luggage",
+        "briefcase", "purse", "messenger bag", "gym bag",
+    )
+
 
 @dataclass
 class TrackingConfig:
@@ -65,14 +75,12 @@ class EmbeddingConfig:
     face_new_id_patience_frames: int = 5  # increased from 3 - wait longer before creating ID
     face_switch_patience_frames: int = 5  # increased from 3 - more stable ID assignment
 
-    # Bag embedding config
-    bag_model_name: str = "resnet50"
-    bag_embedding_size: int = 2048
-    bag_similarity_threshold: float = 0.55  # Lowered from 0.7 for weak ResNet features
-    bag_force_match_threshold: float = 0.45  # Force match above this to prevent duplicates
-    bag_new_id_patience_frames: int = 5  # Wait before creating new bag ID
-    bag_use_color_histogram: bool = True  # Add color features for better matching
-    bag_use_shape_features: bool = True  # Add shape features for better matching
+    # Bag embedding config — DINOv2 for instance-level discrimination
+    bag_model_name: str = "dinov2_vits14"  # DINOv2-small: 384-dim, fast, excellent ReID
+    bag_embedding_size: int = 384
+    bag_similarity_threshold: float = 0.65  # DINOv2 gives lower scores for same object (~0.7-0.9)
+    bag_force_match_threshold: float = 0.55  # Re-identify lost bags above this
+    bag_new_id_patience_frames: int = 3  # Wait 3 frames before creating new bag ID
 
     # Face matching thresholds - CRITICAL for reducing duplicates
     # These are optimized for ArcFace/InsightFace embeddings
@@ -160,6 +168,14 @@ class PersistenceConfig:
 
 
 @dataclass
+class DatabaseConfig:
+    """Database backend configuration."""
+    backend: str = "sqlite"  # "sqlite" or "postgres"
+    sqlite_path: str = "antiterror.db"
+    postgres_dsn: str = "postgresql://antiterror:antiterror@localhost:5432/antiterror"
+
+
+@dataclass
 class PipelineConfig:
     video_source: str | int = 0  # default webcam
     detection: DetectionConfig = field(default_factory=DetectionConfig)
@@ -170,6 +186,7 @@ class PipelineConfig:
     events: EventConfig = field(default_factory=EventConfig)
     persistence: PersistenceConfig = field(default_factory=PersistenceConfig)
     identity: IdentityConfig = field(default_factory=IdentityConfig)
+    database: DatabaseConfig = field(default_factory=DatabaseConfig)
 
 
 def select_device(requested: str) -> str:

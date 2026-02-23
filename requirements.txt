@@ -12,3 +12,6 @@ facenet-pytorch>=2.5.3
 shapely>=2.0.4
 insightface>=0.7.3
 onnxruntime-gpu>=1.17.1  # Use 'onnxruntime' on macOS instead
+psycopg[binary,pool]>=3.1
+pgvector>=0.3.0
+python-dotenv>=1.0.0

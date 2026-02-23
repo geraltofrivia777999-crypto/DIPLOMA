@@ -226,6 +226,9 @@ class AssociationEngine:
         # Track ID to person ID mapping (updated by face tracker)
         self.track_to_person: Dict[int, str] = {}
 
+        # Pending transfer events to be consumed by the pipeline
+        self.pending_transfer_events: List[dict] = []
+
         logger.info("Association engine ready with temporal voting")
 
     def associate(
@@ -520,7 +523,15 @@ class AssociationEngine:
                         if old_owner:
                             self._remove_bag_from_person(old_owner, bag_id)
                         self._add_bag_to_person(person_id, track_id, bag_id, ownership.bag_track_id)
-                        logger.info(f"Bag {bag_id} ownership transferred: {old_owner} -> {person_id}")
+                        logger.warning(f"BAG TRANSFER: {bag_id} ownership transferred: {old_owner} -> {person_id}")
+
+                        # Emit transfer event
+                        self.pending_transfer_events.append({
+                            "type": "Bag Ownership Transfer",
+                            "bag_id": bag_id,
+                            "person_id": person_id,
+                            "previous_owner": old_owner,
+                        })
                 else:
                     # New transfer candidate
                     ownership.transfer_candidate_id = person_id

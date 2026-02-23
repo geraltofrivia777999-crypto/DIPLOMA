@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Face Search - AntiTerror{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Search by Face</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Upload form -->
+    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+        <form id="search-form" enctype="multipart/form-data">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Upload a face photo</label>
+            <div id="drop-zone" class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                <svg class="mx-auto w-12 h-12 text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-sm text-gray-400">Drag & drop or click to select</p>
+                <input type="file" id="file-input" name="file" accept="image/*" class="hidden">
+            </div>
+            <div id="preview-container" class="mt-4 hidden">
+                <img id="preview-img" class="w-32 h-32 object-cover rounded-lg mx-auto">
+            </div>
+            <button type="submit" id="search-btn"
+                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+                Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Results -->
+    <div>
+        <h2 class="text-lg font-semibold mb-3">Results</h2>
+        <div id="search-results" class="space-y-3">
+            <p class="text-gray-500 text-sm">Upload a photo to search</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImg = document.getElementById('preview-img');
+    const searchBtn = document.getElementById('search-btn');
+    const searchForm = document.getElementById('search-form');
+    const resultsDiv = document.getElementById('search-results');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-blue-500'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-blue-500'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-500');
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            showPreview(e.dataTransfer.files[0]);
+        }
+    });
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) showPreview(fileInput.files[0]);
+    });
+
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImg.src = e.target.result;
+            previewContainer.classList.remove('hidden');
+            searchBtn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    searchForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!fileInput.files.length) return;
+        searchBtn.disabled = true;
+        searchBtn.textContent = 'Searching...';
+        resultsDiv.innerHTML = '<p class="text-gray-400 text-sm">Searching...</p>';
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const resp = await fetch('/api/v1/persons/search', { method: 'POST', body: formData });
+            const data = await resp.json();
+
+            if (!resp.ok) {
+                resultsDiv.innerHTML = `<p class="text-red-400 text-sm">${data.detail || 'Error'}</p>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                resultsDiv.innerHTML = '<p class="text-gray-400 text-sm">No matches found</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = data.map(r => `
+                <a href="/persons/${r.person_id}" class="block bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-500 p-4 transition-colors">
+                    <div class="flex items-center space-x-4">
+                        <img src="/api/v1/persons/${r.person_id}/image" alt="${r.person_id}"
+                             class="w-16 h-16 rounded-lg object-cover bg-gray-700"
+                             onerror="this.style.display='none'">
+                        <div>
+                            <div class="font-medium">${r.person_id}</div>
+                            <div class="text-sm text-gray-400">Similarity: ${(r.similarity * 100).toFixed(1)}%</div>
+                        </div>
+                        <div class="ml-auto">
+                            <div class="w-16 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full ${r.similarity > 0.7 ? 'bg-green-500' : r.similarity > 0.5 ? 'bg-yellow-500' : 'bg-red-500'}"
+                                     style="width: ${r.similarity * 100}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        } catch (err) {
+            resultsDiv.innerHTML = `<p class="text-red-400 text-sm">Request failed: ${err.message}</p>`;
+        } finally {
+            searchBtn.disabled = false;
+            searchBtn.textContent = 'Search';
+        }
+    });
+</script>
+{% endblock %}

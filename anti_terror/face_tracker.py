@@ -44,6 +44,10 @@ class FaceTrack:
     frames_since_embedding: int = 0
     last_seen_time: float = 0.0
 
+    # Best face crop for DB storage
+    best_crop: np.ndarray | None = None
+    best_crop_quality: float = 0.0
+
     # Re-ID state
     candidate_id: str | None = None
     candidate_count: int = 0
@@ -561,6 +565,11 @@ class FaceTracker:
             if len(track.embedding_history) > 10:
                 track.embedding_history = track.embedding_history[-10:]
                 track.quality_history = track.quality_history[-10:]
+
+            # Keep best face crop (highest quality)
+            if crop is not None and quality > track.best_crop_quality:
+                track.best_crop = crop
+                track.best_crop_quality = quality
 
             # Assign person_id
             if track.person_id is None:
