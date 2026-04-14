@@ -281,3 +281,38 @@ DETAIL:  Key (person_id, is_centroid, "timestamp")=(P_0001, f, 1771198258.555391
 2026-02-16 03:25:39.815 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 2 identities, 2 ownerships
 2026-02-16 03:25:39.815 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
 2026-02-16 03:26:18.974 | INFO     | anti_terror.runner:_shutdown:779 - Final stats: 2 faces, registry: {'active_tracks': 3, 'known_persons': 1, 'lost_tracks': 2, 'gallery_size': 2}, db: {'persons': 2, 'bags': 2, 'abandoned_bags': 0, 'ownership_links': 0}
+2026-04-14 08:05:38.963 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-04-14 08:05:38.965 | INFO     | anti_terror.database:load_gallery:535 - Loaded 0 identities from database
+2026-04-14 08:05:38.965 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 0 identities from database
+2026-04-14 08:05:38.966 | INFO     | anti_terror.database:load_bag_ownerships:684 - Loaded 0 bag ownerships from database
+2026-04-14 08:05:38.967 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-04-14 08:05:38.967 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session c6a5e955
+2026-04-14 08:05:38.967 | INFO     | anti_terror.runner:run:729 - Starting face-centric pipeline (session c6a5e955). Press 'q' to exit.
+2026-04-14 08:06:03.217 | INFO     | anti_terror.runner:run:737 - Interrupted by user
+2026-04-14 08:06:03.220 | INFO     | anti_terror.runner:_shutdown:747 - Shutting down pipeline...
+2026-04-14 08:06:03.220 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 0 identities, 0 ownerships
+2026-04-14 08:06:03.220 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
+2026-04-14 08:14:43.785 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-04-14 08:14:43.787 | INFO     | anti_terror.database:load_gallery:535 - Loaded 0 identities from database
+2026-04-14 08:14:43.787 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 0 identities from database
+2026-04-14 08:14:43.787 | INFO     | anti_terror.database:load_bag_ownerships:684 - Loaded 0 bag ownerships from database
+2026-04-14 08:14:43.787 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-04-14 08:14:43.788 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session b875ee47
+2026-04-14 08:14:43.788 | INFO     | anti_terror.runner:run:729 - Starting face-centric pipeline (session b875ee47). Press 'q' to exit.
+2026-04-14 08:14:45.546 | INFO     | anti_terror.runner:_shutdown:747 - Shutting down pipeline...
+2026-04-14 08:14:45.546 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 0 identities, 0 ownerships
+2026-04-14 08:14:45.546 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
+2026-04-14 08:14:45.853 | INFO     | anti_terror.runner:_shutdown:779 - Final stats: 0 faces, registry: {'active_tracks': 0, 'known_persons': 0, 'lost_tracks': 0, 'gallery_size': 0}, db: {'persons': 2, 'bags': 1, 'abandoned_bags': 0, 'ownership_links': 1}
+2026-04-14 08:16:21.942 | INFO     | anti_terror.video:open_video_source:9 - Opened video source: 0
+2026-04-14 08:16:21.943 | INFO     | anti_terror.database:load_gallery:535 - Loaded 0 identities from database
+2026-04-14 08:16:21.943 | INFO     | anti_terror.runner:_initialize_from_database:287 - Loaded 0 identities from database
+2026-04-14 08:16:21.943 | INFO     | anti_terror.database:load_bag_ownerships:684 - Loaded 0 bag ownerships from database
+2026-04-14 08:16:21.943 | INFO     | anti_terror.runner:_initialize_from_database:293 - Loaded 0 bag ownership records
+2026-04-14 08:16:21.943 | INFO     | anti_terror.runner:__init__:181 - Pipeline initialized with session 90acd583
+2026-04-14 08:16:21.945 | INFO     | anti_terror.runner:run:729 - Starting face-centric pipeline (session 90acd583). Press 'q' to exit.
+2026-04-14 08:16:27.330 | INFO     | anti_terror.face_tracker:match_or_create:162 - Created new identity P_0001 (best_match: None, score: 0.000)
+2026-04-14 08:16:55.842 | INFO     | anti_terror.runner:run:737 - Interrupted by user
+2026-04-14 08:16:55.843 | INFO     | anti_terror.runner:_shutdown:747 - Shutting down pipeline...
+2026-04-14 08:16:55.847 | DEBUG    | anti_terror.runner:_periodic_save:338 - Periodic save: 1 identities, 0 ownerships
+2026-04-14 08:16:55.848 | INFO     | anti_terror.runner:_shutdown:752 - Final state saved to database
+2026-04-14 08:16:56.167 | INFO     | anti_terror.runner:_shutdown:779 - Final stats: 1 faces, registry: {'active_tracks': 1, 'known_persons': 1, 'lost_tracks': 0, 'gallery_size': 1}, db: {'persons': 2, 'bags': 1, 'abandoned_bags': 0, 'ownership_links': 1}

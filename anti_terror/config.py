@@ -57,10 +57,12 @@ class EmbeddingConfig:
     face_model: str = "vggface2"  # facenet-pytorch pretrained set
 
     # InsightFace model selection
-    # Options: "buffalo_l" (best), "buffalo_m", "buffalo_s", "buffalo_sc"
-    # buffalo_l: ArcFace R100 - highest accuracy, recommended for production
-    # buffalo_s: ArcFace R34 - faster, good balance
-    face_model_name: str = "buffalo_l"
+    # antelopev2 uses ResNet100@Glint360K and is a stronger default when the
+    # local model pack is installed. buffalo_l remains the safe fallback
+    # because it is the default auto-downloadable model pack in insightface 0.7.3.
+    face_model_name: str = "antelopev2"
+    face_fallback_model_name: str = "buffalo_l"
+    face_model_root: Path = Path.home() / ".insightface" / "models"
 
     # Face detection parameters
     face_confidence: float = 0.65  # slightly lower to catch more faces
@@ -83,10 +85,10 @@ class EmbeddingConfig:
     bag_new_id_patience_frames: int = 3  # Wait 3 frames before creating new bag ID
 
     # Face matching thresholds - CRITICAL for reducing duplicates
-    # These are optimized for ArcFace/InsightFace embeddings
-    face_similarity_threshold: float = 0.55  # lowered from 0.8 - ArcFace scores are typically lower
-    face_force_match_margin: float = 0.15  # increased margin for more aggressive matching
-    face_create_threshold: float = 0.35  # lowered - prefer reusing existing IDs
+    # Keep these conservative to reduce accidental merges of different people.
+    face_similarity_threshold: float = 0.62
+    face_force_match_margin: float = 0.08
+    face_create_threshold: float = 0.45
 
     # EMA smoothing parameters
     ema_alpha: float = 0.7  # weight for old embedding (0.7*old + 0.3*new)

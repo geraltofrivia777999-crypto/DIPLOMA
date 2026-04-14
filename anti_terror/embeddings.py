@@ -134,8 +134,7 @@ class BagEmbedder:
 class FaceEmbedder:
     """Face detection and embedding extraction with quality assessment.
 
-    Uses InsightFace buffalo_l model (ArcFace) for best accuracy,
-    with FaceNet as fallback.
+    Uses an InsightFace ArcFace pack when available, with FaceNet fallback.
     """
 
     def __init__(self, cfg: EmbeddingConfig):
@@ -155,28 +154,75 @@ class FaceEmbedder:
             else:
                 providers = ["CPUExecutionProvider"]
 
-            # Use buffalo_l model for better accuracy (ArcFace R100)
-            # buffalo_l has best recognition accuracy among InsightFace models
-            self.model = FaceAnalysis(
-                name=cfg.face_model_name,  # "buffalo_l" for best quality
-                providers=providers
-            )
-            # ctx_id: 0 for GPU (CUDA), -1 for CPU/CoreML
-            ctx_id = 0 if device == "cuda" else -1
-            # Larger det_size improves small face detection
-            self.model.prepare(ctx_id=ctx_id, det_size=(640, 640))
-            logger.info(f"Face embedder ready (InsightFace {cfg.face_model_name})")
-        else:
-            device = select_device(cfg.device)
-            self.mtcnn = MTCNN(
-                image_size=160,
-                device=device,
-                thresholds=[0.7, 0.8, 0.9],  # stricter thresholds
-                keep_all=True
-            )
-            self.model = InceptionResnetV1(pretrained=cfg.face_model).eval().to(device)
+            selected_model = self._resolve_insightface_model_name(cfg.face_model_name)
+            fallback_model = getattr(cfg, "face_fallback_model_name", cfg.face_model_name)
             self.device = device
-            logger.info(f"Face embedder ready (FaceNet) on {device}")
+
+            try:
+                self.model = self._load_insightface_model(selected_model, providers, device)
+                self.active_model_name = selected_model
+                logger.info(f"Face embedder ready (InsightFace {self.active_model_name})")
+                return
+            except Exception as exc:
+                logger.warning(
+                    f"Failed to initialize InsightFace model '{selected_model}': {exc}"
+                )
+
+            if fallback_model != selected_model:
+                try:
+                    self.model = self._load_insightface_model(fallback_model, providers, device)
+                    self.active_model_name = fallback_model
+                    logger.warning(
+                        f"Falling back to InsightFace model '{fallback_model}'"
+                    )
+                    logger.info(f"Face embedder ready (InsightFace {self.active_model_name})")
+                    return
+                except Exception as exc:
+                    logger.warning(
+                        f"Failed to initialize fallback InsightFace model '{fallback_model}': {exc}"
+                    )
+
+            logger.warning("Switching face embedder to FaceNet fallback")
+
+        device = select_device(cfg.device)
+        self.mtcnn = MTCNN(
+            image_size=160,
+            device=device,
+            thresholds=[0.7, 0.8, 0.9],  # stricter thresholds
+            keep_all=True
+        )
+        self.model = InceptionResnetV1(pretrained=cfg.face_model).eval().to(device)
+        self.device = device
+        self.provider = "facenet"
+        self.active_model_name = cfg.face_model
+        logger.info(f"Face embedder ready (FaceNet {self.active_model_name}) on {device}")
+
+    def _resolve_insightface_model_name(self, requested_name: str) -> str:
+        model_root = Path(getattr(self.cfg, "face_model_root", Path.home() / ".insightface" / "models")).expanduser()
+        fallback_name = getattr(self.cfg, "face_fallback_model_name", requested_name)
+
+        requested_path = model_root / requested_name
+        if requested_path.exists():
+            return requested_name
+
+        fallback_path = model_root / fallback_name
+        if requested_name != fallback_name and fallback_path.exists():
+            logger.warning(
+                f"InsightFace model '{requested_name}' is not installed in {model_root}. "
+                f"Using local fallback '{fallback_name}'."
+            )
+            return fallback_name
+
+        return requested_name
+
+    @staticmethod
+    def _load_insightface_model(model_name: str, providers: list[str], device: str) -> FaceAnalysis:
+        model = FaceAnalysis(name=model_name, providers=providers)
+        # ctx_id: 0 for GPU (CUDA), -1 for CPU/CoreML
+        ctx_id = 0 if device == "cuda" else -1
+        # Larger det_size improves small face detection
+        model.prepare(ctx_id=ctx_id, det_size=(640, 640))
+        return model
 
     def _compute_quality(self, face_crop: np.ndarray, det_score: float,
                          pose: Optional[np.ndarray] = None) -> FaceQuality:

@@ -107,12 +107,14 @@ class FaceGallery:
         """
         best_id, best_score = self.match(embedding, quality)
 
-        # Adaptive threshold based on gallery size
-        # More IDs = stricter matching to avoid duplicates
+        # Adaptive threshold based on gallery size.
+        # More IDs should make matching stricter to reduce identity collisions.
         base_threshold = self.cfg.face_similarity_threshold
         if len(self.identities) > 5:
-            # Lower threshold when many IDs exist (be more permissive in matching)
-            adaptive_threshold = base_threshold - 0.05 * min(len(self.identities) - 5, 5) / 5
+            adaptive_threshold = min(
+                base_threshold + 0.05 * min(len(self.identities) - 5, 5) / 5,
+                0.75,
+            )
         else:
             adaptive_threshold = base_threshold
 
@@ -122,13 +124,16 @@ class FaceGallery:
             return best_id, False, best_score
 
         # Secondary match (force threshold)
-        force_threshold = adaptive_threshold - self.cfg.face_force_match_margin
+        force_threshold = max(
+            adaptive_threshold - self.cfg.face_force_match_margin,
+            self.cfg.face_create_threshold,
+        )
         if best_id and best_score >= force_threshold:
             self.identities[best_id].add_embedding(embedding, quality)
             return best_id, False, best_score
 
-        # Tertiary match (very low threshold to avoid duplicates)
-        min_threshold = 0.25
+        # Tertiary match only when the score is still reasonably close.
+        min_threshold = self.cfg.face_create_threshold
         if best_id and best_score >= min_threshold:
             logger.debug(f"Low-confidence match ({best_score:.3f}) to {best_id}")
             self.identities[best_id].add_embedding(embedding, quality)
@@ -137,8 +142,8 @@ class FaceGallery:
         # Check cooldown before creating
         now = time.time()
         if (now - self.last_creation_time) < self.cfg.face_new_id_cooldown_s:
-            if best_id:
-                # Cooldown active - reuse best match anyway
+            if best_id and best_score >= force_threshold:
+                # Cooldown active - reuse only if the match is still strong enough
                 self.identities[best_id].add_embedding(embedding, quality)
                 return best_id, False, best_score
             # No match and cooldown active - return None
@@ -598,7 +603,11 @@ class FaceTracker:
                     else:
                         # Not enough frames - try to match existing only
                         best_id, best_score = self.gallery.match(track.embedding, quality)
-                        if best_id and best_score >= self.embedding_cfg.face_similarity_threshold - 0.1:
+                        warmup_threshold = max(
+                            self.embedding_cfg.face_create_threshold,
+                            self.embedding_cfg.face_similarity_threshold - self.embedding_cfg.face_force_match_margin,
+                        )
+                        if best_id and best_score >= warmup_threshold:
                             track.person_id = best_id
                             self.registry.register_track(track_id, best_id, embedding)
                             self.gallery.identities[best_id].add_embedding(embedding, quality)
